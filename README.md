@@ -7,9 +7,8 @@ The following scripts were designed to be run in Ubuntu and require access to MI
 Run the following commands in a terminal to install dependencies:
 ```
 $ sudo apt-get update
-$ sudo apt-get install python-pexpect ldap-utils
+$ sudo apt-get install default-jre default-jdk python-pexpect ldap-utils
 ```
-TODO: Add dependencies for Java.
 
 If you do not plan to run Step 2 on an MIT internet connection, download and install Cisco AnyConnect from [IS&T's website](https://ist.mit.edu/cisco-anyconnect/all).
 
