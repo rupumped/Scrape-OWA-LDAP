@@ -67,7 +67,7 @@ public class OWAScraper {
             r.delay(100);
             r.click(RobotPlus.RIGHT);
             r.delay(100);
-            for (int d=0;d<10;d++) {
+            for (int d=0;d<11;d++) {
                 r.type(KeyEvent.VK_DOWN);
                 r.delay(100);
             }
@@ -125,7 +125,7 @@ public class OWAScraper {
                 r.delay(700);
             }
             while (!r.screenContains(screenshot.get("half_selected_content"))) {
-                r.type(KeyEvent.VK_DOWN);
+                r.type(KeyEvent.VK_UP);
                 r.delay(700);
             }
 //            ii++;
