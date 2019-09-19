@@ -19,6 +19,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -59,11 +60,14 @@ public class OWAScraper {
             r.type(KeyEvent.VK_F12);
             r.delayUntilLoad(screenshot.get("selected_html"));
         }
+
+        // Record position of HTML body tag
+        Point selected_html = r.findInScreen(screenshot.get("selected_html"), "C");
         
 //        int ii=0;
         while (true) {
             // Copy HTML
-            r.mouseMove(screenshot.get("selected_html"), "C");
+            r.mouseMove(selected_html);
             r.delay(100);
             r.click(RobotPlus.RIGHT);
             r.delay(100);
@@ -115,12 +119,12 @@ public class OWAScraper {
             if (!r.screenContains(screenshot.get("selected_content"))) {
                 r.mouseMove(0, 0);
                 r.delay(1000);
-                r.mouseMove(screenshot.get("selected_html"), "C");
+                r.mouseMove(selected_html);
                 r.delay(1000);
             }
             r.click(screenshot.get("selected_content"), "C");
             r.delay(500);
-            for (int d=0; d<10; d++) {
+            for (int d=0; d<5; d++) {
                 r.type(KeyEvent.VK_PAGE_DOWN);
                 r.delay(700);
             }
