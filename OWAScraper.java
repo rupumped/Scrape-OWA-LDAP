@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.awt.datatransfer.StringSelection;
 import nicksapps.MainPlus;
 import nicksapps.RobotPlus;
 
@@ -40,21 +41,24 @@ public class OWAScraper {
     public static void main(String[] args) throws AWTException, UnsupportedFlavorException, IOException {
         // Setup bot
         RobotPlus r = new RobotPlus();
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        HashMap<String,BufferedImage> screenshot = MainPlus.loadImages("screenshots");
         
-        // Setup directory file to write
-        File writeFile = new File(DIR_FN);
-        FileWriter writer = null;
-        try {
-            writer = new FileWriter(writeFile, true);
-        } catch (IOException ex) {
-            System.err.println("Could not open " + writeFile.getName() + ".\nIf the file is open, please close it.");
-            System.exit(0);
-        }
+        // Setup clipboard
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection clear = new StringSelection("");
+        clipboard.setContents(clear, null);
         
         // Navigate to OWA Client
         r.holdType(new int[] {KeyEvent.VK_ALT}, new int[] {KeyEvent.VK_TAB});
+        r.delay(1000);
+
+        // Scroll
+        while (! ((String) clipboard.getData(DataFlavor.stringFlavor)).contains("zzpacker") ) {
+            clipboard.setContents(clear, null);
+            r.type(KeyEvent.VK_DOWN);
+            while (((String) clipboard.getData(DataFlavor.stringFlavor)).equals("")) {};
+        }
+/*
+
         r.delayUntilLoad(screenshot.get("owa"));
         if (!r.delayUntilLoad(screenshot.get("selected_html"), 1000)) {
             r.type(KeyEvent.VK_F12);
@@ -136,7 +140,7 @@ public class OWAScraper {
 //            if (ii>3) {
 //                closeOut(writer,"Done");
 //            }
-        }
+        }*/
     }
     
     /**
@@ -145,7 +149,7 @@ public class OWAScraper {
      * @param writer  FileWriter to close
      * @param message Custom String to write to the console for debugging
      */
-    public static void closeOut(FileWriter writer, String message) {
+    /*public static void closeOut(FileWriter writer, String message) {
         System.err.println(message);
         try {
             writer.flush();
@@ -166,5 +170,5 @@ public class OWAScraper {
             r.type(KeyEvent.VK_DOWN);
             r.delay(200);
         }
-    }
+    }*/
 }
