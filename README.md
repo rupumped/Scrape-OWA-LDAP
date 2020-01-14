@@ -15,21 +15,32 @@ Compile the Java scraper:
 $ javac OWAScraper.java nicksapps/*.java
 ```
 
+Install the MuScrape browser extension:
+1. Open Firefox.
+2. Open the [about:debugging](https://developer.mozilla.org/en-US/docs/Tools/about:debugging) page.
+3. Click "This Firefox".
+4. Click "Load Temporary Add-on".
+5. Select any file in the [browser_extension directory](./browser_extension).
+After completing the above steps, the MuScrape icon should appear in the top right corner of your browser.
+
 If you do not plan to run Step 2 on an MIT internet connection, download and install Cisco AnyConnect from [IS&T's website](https://ist.mit.edu/cisco-anyconnect/all).
 
 ## Step 1: Scrape the MIT OWA Address Book
-The first step is to download the complete list of MIT aliases from the OWA client. To accomplish this, we have built a bot based on the Java Robot class that manually scrolls through the MIT OWA People directory, copying large segments of HTML and using regular expressions to extract the aliases. Due to the quantity of bugs in Microsoft's OWA client, this is the least stable component of the repository. After extensive use, OWA starts lagging dramatically, failing to load contacts, loading duplicate contacts in a loop, or logging out the user. As far as I can tell, this is the result of shoddy workmanship by Microsoft, but the result is unfortunately robust security to bots. Therefore, this step may require several attempts to work correctly. It usually takes approximately eight hours to run per attempt, and you cannot use your computer for other things while it is running. The output of this step is a CSV file, `dir.csv`, containing a list of all MIT aliases.
+The first step is to download the complete list of MIT aliases from the OWA client. To accomplish this, we have built a browser extension, MuScrape, that listens to HTTP responses and extracts email addresses. MuScrape works in parallel with a bot based on the Java Robot class that manually scrolls through the MIT OWA People directory. Because the browser extension and Java bot use the system clipboard to communicate, any data you had copied to the clipboard will be deleted. Due to the quantity of bugs in Microsoft's OWA client, this is the least stable component of the repository. After extensive use, OWA starts lagging dramatically, failing to load contacts, loading duplicate contacts in a loop, or logging out the user. As far as I can tell, this is the result of shoddy workmanship by Microsoft, but the result is unfortunately robust security to bots. Therefore, this step may require several attempts to work correctly. It usually takes approximately eight hours to run per attempt, and you cannot use your computer for other things while it is running. The output of this step is a list of all MIT aliases stored in the MuScrape extension. The MuScrape extension is adapted from the browser extension [Exity](https://addons.mozilla.org/en-US/firefox/addon/exity/) written by [Cyd](https://addons.mozilla.org/en-US/firefox/user/12774831/), which intercepts live HTTP requests and responses based upon a URL pattern. Exity is licensed under the [MIT License](https://opensource.org/licenses/mit-license.php).
 
 Navigate to the [MIT OWA client](https://owa.exchange.mit.edu/owa) and log in if prompted.
 
 Click "People", then "All Email Users". You should now see the beginning of the address book.
 
-Without switching to any other windows, open a terminal and enter the following command:
+Without switching to any other windows, open a terminal, navigate to your local copy of this repository, and enter the following command:
 ```
 $ java OWAScraper
 ```
+The above Java bot should switch windows back to the browser and begin scrolling through contacts, enabling MuScrape to extract their aliases.
 
-After the scraper finishes, run the following in a terminal to remove duplicates. This step is not required, but will speed up the rest of the process.
+After the scraper finishes, click on the MuScrape browser extension icon in the top right corner of the browser. Copy the extracted aliases to a CSV file titled `dir.csv` in your local copy of this repository.
+
+Optionally, you can run the following in a terminal to remove duplicates. This step is not required, but will speed up the rest of the process.
 ```
 $ ./rm_duplicates.sh dir.csv
 ```
@@ -51,9 +62,10 @@ TODO: Write this section.
 ## Repository Overview
 | File Name | Description |
 | --------- | ----------- |
+| browser_extension/ | The browser extension, MuScrape, used in Step 1. |
 | nicksapps/ | Java classes imported by OWAScraper in Step 1. |
-| screenshots/ | Images used by OWAScraper to identify important parts of the screen in Step 1. |
 | ldap_scrape.py | Main Python script used in Step 2. |
 | LICENSE | The Unlicense. |
 | OWAScraper.java | Main Java script used in Step 1. |
 | README.md | This document. |
+| rm_duplicates.sh | A shell script that removes all duplicate entries from a CSV used in Step 1. |
