@@ -23,6 +23,7 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.IllegalStateException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -52,123 +53,29 @@ public class OWAScraper {
         r.delay(1000);
 
         // Scroll
-        while (! ((String) clipboard.getData(DataFlavor.stringFlavor)).contains("zzpacker") ) {
-            clipboard.setContents(clear, null);
+        while (! paste(clipboard).contains("zzpacker") ) {
+        	copy(clipboard, clear);
             r.type(KeyEvent.VK_DOWN);
-            while (((String) clipboard.getData(DataFlavor.stringFlavor)).equals("")) {};
+            while (paste(clipboard).equals("")) { };
         }
-/*
+    }
+    
+    public static String paste(Clipboard clipboard) throws UnsupportedFlavorException, IOException {
+    	String contents;
+    	while (true) {
+    		try {
+    			contents = (String) clipboard.getData(DataFlavor.stringFlavor);
+    			return contents;
+    		} catch (IllegalStateException e) { }
+    	}
+    }
 
-        r.delayUntilLoad(screenshot.get("owa"));
-        if (!r.delayUntilLoad(screenshot.get("selected_html"), 1000)) {
-            r.type(KeyEvent.VK_F12);
-            r.delayUntilLoad(screenshot.get("selected_html"));
-        }
-
-        // Record position of HTML body tag
-        Point selected_html = r.findInScreen(screenshot.get("selected_html"), "C");
-        
-//        int ii=0;
-        while (true) {
-            // Copy HTML
-            r.mouseMove(selected_html);
-            r.delay(100);
-            r.click(RobotPlus.RIGHT);
-            r.delay(100);
-            for (int d=0;d<11;d++) {
-                r.type(KeyEvent.VK_DOWN);
-                r.delay(100);
-            }
-            r.type(KeyEvent.VK_RIGHT);
-            r.delay(100);
-            r.type(KeyEvent.VK_ENTER);
-            r.delay(100);
-            
-            // Process HTML
-            String html = null;
-            try {
-                html = (String) clipboard.getData(DataFlavor.stringFlavor);
-            } catch (UnsupportedFlavorException | IOException ex) {
-                closeOut(writer, "Could not paste data from clipboard.");
-            } catch (IllegalStateException exc) {
-                r.delay(5000);
-                try {
-                    html = (String) clipboard.getData(DataFlavor.stringFlavor);
-                } catch (Exception exce) {
-                    closeOut(writer, exce.toString());
-                }
-            }
-            
-            
-            // Parse HTML
-            Matcher m = userPattern.matcher(html);
-            while (m.find()) {
-                try {
-                    writer.append(m.group(1) + ",");
-                } catch (IOException e) {
-                    closeOut(writer, "Ended on: " + m.group(1));
-                }
-                if (m.group(1).equals("zzpacker")) {
-                    closeOut(writer, "Completed successfully.");
-                }
-            }
-            try {
-                writer.flush();
-            } catch (IOException e) {
-                closeOut(writer, "Could not flush data to file.");
-            }
-            
-            // Scroll down to next set of contacts
-            r.delayUntilLoad(screenshot.get("selected_content"), 1000);
-            if (!r.screenContains(screenshot.get("selected_content"))) {
-                r.mouseMove(0, 0);
-                r.delay(1000);
-                r.mouseMove(selected_html);
-                r.delay(1000);
-            }
-            r.click(screenshot.get("selected_content"), "C");
-            r.delay(500);
-            for (int d=0; d<5; d++) {
-                r.type(KeyEvent.VK_PAGE_DOWN);
-                r.delay(700);
-            }
-            while (!r.screenContains(screenshot.get("half_selected_content"))) {
-                r.type(KeyEvent.VK_UP);
-                r.delay(700);
-            }
-//            ii++;
-//            if (ii>3) {
-//                closeOut(writer,"Done");
-//            }
-        }*/
+    public static void copy(Clipboard clipboard, StringSelection contents) {
+    	while (true) {
+    		try {
+    			clipboard.setContents(contents, null);
+    			return;
+    		} catch (IllegalStateException e) { }
+    	}
     }
-    
-    /**
-     * Attempts to flush and close the file, then exits.
-     * 
-     * @param writer  FileWriter to close
-     * @param message Custom String to write to the console for debugging
-     */
-    /*public static void closeOut(FileWriter writer, String message) {
-        System.err.println(message);
-        try {
-            writer.flush();
-            writer.close();
-        } catch (IOException exc) {
-            System.err.println("Could not close file.");
-        }
-        System.exit(0);
-    }
-    
-    public static void playDing(RobotPlus r) {
-//        r.click(new Point(365,750), 100);
-//        r.click(new Point(680,670), 100);
-    }
-    
-    public static void downContacts(RobotPlus r, int n) {
-        for (int d=0;d<n;d++) {
-            r.type(KeyEvent.VK_DOWN);
-            r.delay(200);
-        }
-    }*/
 }

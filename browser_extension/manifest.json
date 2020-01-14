@@ -1,0 +1,33 @@
+{
+  "name": "MuScrape",
+  "description": "Extract emails from loading webpage",
+  "manifest_version": 2,
+  "version": "0.0",
+   "icons": {
+    "48": "icons/play48.png"
+    , "96": "icons/play96.png"
+  },
+  "author": "rupumped",
+  "browser_action": {
+    "default_icon": "icons/play.svg",
+    "default_title": "MuScrape",
+    "default_popup": "popup/muscrape.html"
+  },
+  "permissions": [
+    "activeTab",
+    "browsingData",
+    "clipboardRead",
+    "clipboardWrite",
+    "contextMenus",
+    "notifications",
+    "storage",
+    "tabs",
+    "unlimitedStorage",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["include/string.js","background.js"]
+  }
+}
