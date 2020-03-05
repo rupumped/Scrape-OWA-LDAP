@@ -217,6 +217,7 @@ function convStr(r) {
 	if( r.response.body!=null ) { str += r.response.body + "\n" ; }
 	//return str ;
 
+	// Nick: extract alias and return that instead of entire 
 	var emailRegex = /"EmailAddress":"(.+?)@/
 	var emails = r.response.body.match(emailRegex);
 	return emails[1] +"," ;
@@ -249,7 +250,7 @@ function doSave( r ) {
 			}
 			if( debug ) { console.log( convStr(r) ) ; }
 			browser.storage.local.set(item) ;
-			copy2clipboard(convStr_r);
+			copy2clipboard(convStr_r);	// Nick: copies alias to clipboard for Java bot
 		}
 		, function(error) { console.log(`Error: ${error}`); } 
 	) ;

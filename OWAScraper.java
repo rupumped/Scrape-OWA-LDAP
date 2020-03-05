@@ -18,18 +18,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.awt.Point;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.IllegalStateException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.awt.datatransfer.StringSelection;
-import nicksapps.MainPlus;
 import nicksapps.RobotPlus;
 
 public class OWAScraper {
