@@ -63,7 +63,7 @@ TODO: Write this section.
 | File Name | Description |
 | --------- | ----------- |
 | browser_extension/ | The browser extension, MuScrape, used in Step 1. |
-| nicksapps/ | Java classes imported by OWAScraper in Step 1. |
+| nicksapps/ | Java classes imported by OWAScraper in Step 1. See [here](https://github.com/rupumped/NicksAPPS/tree/master/Java) for more information. |
 | ldap_scrape.py | Main Python script used in Step 2. |
 | LICENSE | The Unlicense. |
 | OWAScraper.java | Main Java script used in Step 1. |
