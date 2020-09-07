@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import pexpect, csv, string, math, sys, os
+import pexpect, csv, math, sys, os
 
 INPUT_FN = 'dir.csv'
 OUTPUT_FN = 'dir_w.csv'
@@ -11,16 +11,16 @@ lastUID = ''
 output_exists = False
 if os.path.isfile(OUTPUT_FN):
 	output_exists = True
-	with open(OUTPUT_FN, 'rb') as file:
+	with open(OUTPUT_FN, 'r') as file:
 		reader = csv.DictReader(file)
 		for row in reader:
 			lastUID = row['Alias']
 	print('Starting with alias {}'.format(lastUID))
 
-with open(INPUT_FN, 'rb') as readfile:
+with open(INPUT_FN, 'r') as readfile:
 	reader = csv.reader(readfile)
 
-	with open(OUTPUT_FN, 'a' if output_exists else 'wb') as writefile:
+	with open(OUTPUT_FN, 'a' if output_exists else 'w') as writefile:
 		writer = csv.DictWriter(writefile, fieldnames=FIELDS)
 		if not output_exists:
 			writer.writeheader();
@@ -37,54 +37,55 @@ with open(INPUT_FN, 'rb') as readfile:
 					try:
 						proc = pexpect.spawn("ldapsearch -LLL -x -h ldap -b \"ou=users,ou=moira,dc=mit,dc=edu\" \"uid=" + alias + "\"")
 						proc.expect(pexpect.EOF)
-						ldap = proc.before
+						ldap = proc.before.decode('ascii')
 						if "Can't contact" in ldap:
 							raise
 					except:
 						no_errors = False
+						print(alias)
 						break
 						
-					yind = string.find(ldap,'mitDirStudentYear: ')
+					yind = ldap.find('mitDirStudentYear: ')
 					if (yind != -1):
 						# Year (G or otherwise)
 						year = ldap[yind:]
-						yind = string.find(year,'\r\n')
+						yind = year.find('\r\n')
 						year = year[19:yind].replace(',','')
 						if (year is 'G'):
 							# On Campus Status
-							ocInd = string.find(ldap,'mitXfinityOnCampusStatus: ')
+							ocInd = ldap.find('mitXfinityOnCampusStatus: ')
 							if (ocInd==-1):
 								oncampus = 'not_listed'
 							else:
 								oncampus = ldap[ocInd:]
-								ocInd = string.find(oncampus,'\r\n')
+								ocInd = oncampus.find('\r\n')
 								oncampus = oncampus[26:ocInd].replace(',','')
 						
 							# Department
-							deptInd = string.find(ldap,'ou: ')
+							deptInd = ldap.find('ou: ')
 							if (deptInd==-1):
 								dept = 'not_listed'
 							else:
 								dept = ldap[deptInd:]
-								deptInd = string.find(dept,'\r\n')
+								deptInd = dept.find('\r\n')
 								dept = dept[4:deptInd].replace(',','')
 			
 							# Given Name
-							gnInd = string.find(ldap,'givenName: ')
+							gnInd = ldap.find('givenName: ')
 							if (gnInd==-1):
 								gn = 'not_listed'
 							else:
 								gn = ldap[gnInd:]
-								gnInd = string.find(gn,'\r\n')
+								gnInd = gn.find('\r\n')
 								gn = gn[11:gnInd].replace(',','')
 
 							# Surname
-							snInd = string.find(ldap,'sn: ')
+							snInd = ldap.find('sn: ')
 							if (snInd==-1):
 								sn = 'not_listed'
 							else:
 								sn = ldap[snInd:]
-								snInd = string.find(sn,'\r\n')
+								snInd = sn.find('\r\n')
 								sn = sn[4:snInd].replace(',','')
 							
 							# Write Information to File
@@ -97,7 +98,7 @@ with open(INPUT_FN, 'rb') as readfile:
 								sys.stdout.flush()
 				else:
 					record_data = alias == lastUID
-					print('Found {}! Beginning scrape where I left off.'.format(lastUID))
+					if record_data: print('Found {}! Beginning scrape where I left off.'.format(lastUID))
 
 # Present data
 print('Completed without errors!' if no_errors else 'Connection lost! Please reconnect and start again.')
