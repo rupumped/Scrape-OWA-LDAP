@@ -28,6 +28,7 @@ import nicksapps.RobotPlus;
 public class OWAScraper {
     // User parameters
     private static final String DIR_FN = "dir.csv";     // File into which to write data.
+    private static final String LAST_ALIAS = "zzpacker";    // When this alias is read from OWA, stop the bot.
     
     // Precompiled regex patterns for HTML extraction
     private static final Pattern userPattern = Pattern.compile("email=(.+?)%40");
@@ -46,7 +47,7 @@ public class OWAScraper {
         r.delay(1000);
 
         // Scroll
-        while (! paste(clipboard).contains("zzpacker") ) {
+        while (! paste(clipboard).contains(LAST_ALIAS) ) {
         	copy(clipboard, clear);
             r.type(KeyEvent.VK_DOWN);
             while (paste(clipboard).equals("")) { };
